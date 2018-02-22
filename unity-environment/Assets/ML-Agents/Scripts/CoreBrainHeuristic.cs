@@ -1,54 +1,70 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
 using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-/// CoreBrain which decides actions using developer-provided Decision.cs script.
+/// <summary>
+/// Core brain type that is based on hard-coded heuristic rules. This type
+/// is helpful for both debugging behaviors and comparing a trained agent
+/// from a hard-coded one.
+/// </summary>
 public class CoreBrainHeuristic : ScriptableObject, CoreBrain
 {
+    /// <summary>
+    /// Flag indicating whether the broadcast feature should be enabled or not.
+    /// </summary>
     [SerializeField]
-    private bool broadcast = true;
+    [Tooltip("If checked, the Brain will broadcast observations and actions to Python.")]
+    bool broadcast = true;
 
-    /**< Reference to the brain that uses this CoreBrainHeuristic */
+    /// <summary>
+    /// Reference to the brain that uses this CoreBrainExternal.
+    /// </summary>
     public Brain brain;
 
+    /// <summary>
+    /// External communicator used for sending and receiving messages.
+    /// </summary>
     ExternalCommunicator coord;
 
-    /**< Reference to the Decision component used to decide the actions */
+    /// <summary>
+    /// Reference to the Decision component used to decide the actions.
+    /// </summary>
     public Decision decision;
 
-    /// Create the reference to the brain
+    /// <summary> <inheritdoc/> </summary>
     public void SetBrain(Brain b)
     {
         brain = b;
     }
 
-    /// Create the reference to decision
+    /// <summary> <inheritdoc/> </summary>
     public void InitializeCoreBrain()
     {
         decision = brain.gameObject.GetComponent<Decision>();
-
-        if ((brain.gameObject.transform.parent.gameObject.GetComponent<Academy>().communicator == null)
-            || (!broadcast))
+        Academy academy = brain.gameObject.transform.parent.gameObject
+                       .GetComponent<Academy>();
+        if (!academy.IsCommunicatorOn() || !broadcast)
         {
             coord = null;
         }
-        else if (brain.gameObject.transform.parent.gameObject.GetComponent<Academy>().communicator is ExternalCommunicator)
+        else if (academy.GetCommunicator() is ExternalCommunicator)
         {
-            coord = (ExternalCommunicator)brain.gameObject.transform.parent.gameObject.GetComponent<Academy>().communicator;
+            coord = (ExternalCommunicator)academy.GetCommunicator();
             coord.SubscribeBrain(brain);
         }
     }
 
-    /// Uses the Decision Component to decide that action to take
+    /// <summary> <inheritdoc/> </summary>
     public void DecideAction()
     {
         if (decision == null)
         {
-            throw new UnityAgentsException("The Brain is set to Heuristic, but no decision script attached to it");
+            throw new UnityAgentsException(
+                "The Brain is set to Heuristic, but no decision script attached to it");
         }
 
         var actions = new Dictionary<int, float[]>();
@@ -81,7 +97,7 @@ public class CoreBrainHeuristic : ScriptableObject, CoreBrain
         brain.SendMemories(new_memories);
     }
 
-    /// Nothing needs to be implemented, the states are collected in DecideAction
+    /// <summary> <inheritdoc/> </summary>
     public void SendState()
     {
         if (coord != null)
@@ -90,18 +106,21 @@ public class CoreBrainHeuristic : ScriptableObject, CoreBrain
         }
     }
 
-    /// Displays an error if no decision component is attached to the brain
+    /// <summary> <inheritdoc/> </summary>
     public void OnInspector()
     {
 #if UNITY_EDITOR
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        broadcast = EditorGUILayout.Toggle(new GUIContent("Broadcast",
-                      "If checked, the brain will broadcast states and actions to Python."), broadcast);
+        broadcast = EditorGUILayout.Toggle(
+            new GUIContent("Broadcast",
+                           "If checked, the brain will broadcast states and actions to Python."),
+            broadcast);
         if (brain.gameObject.GetComponent<Decision>() == null)
         {
-            EditorGUILayout.HelpBox("You need to add a 'Decision' component to this gameObject", MessageType.Error);
+            EditorGUILayout.HelpBox(
+                "You need to add a 'Decision' component to this gameObject",
+                MessageType.Error);
         }
 #endif
     }
-
 }

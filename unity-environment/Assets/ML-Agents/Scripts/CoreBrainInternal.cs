@@ -1,67 +1,81 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-using System.Linq;
-
 #if ENABLE_TENSORFLOW
 using TensorFlow;
 #endif
 
-/// CoreBrain which decides actions using internally embedded TensorFlow model.
+/// <summary>
+/// Core Brain that is based on an embedded TensorFlow model (the model is
+/// built with an External Brain type). Supports the Broadcast feature 
+/// where action, observations and rewards are sent to the Python API to
+/// facilitate model updates or debugging.
+/// </summary>
 public class CoreBrainInternal : ScriptableObject, CoreBrain
 {
-
+    /// <summary>
+    /// Flag indicating whether the broadcast feature should be enabled or not.
+    /// </summary>
     [SerializeField]
-    [Tooltip("If checked, the brain will broadcast states and actions to Python.")]
-    private bool broadcast = true;
+    [Tooltip("If checked, the Brain will broadcast observations and actions to Python.")]
+    bool broadcast = true;
 
     [System.Serializable]
-    private struct TensorFlowAgentPlaceholder
+    struct TensorFlowAgentPlaceholder
     {
-        public enum tensorType
+        public enum TensorType
         {
             Integer,
             FloatingPoint
-        }
-
-        ;
+        };
 
         public string name;
-        public tensorType valueType;
+        public TensorType valueType;
         public float minValue;
         public float maxValue;
-
     }
 
+    /// <summary>
+    /// External communicator used for sending and receiving messages.
+    /// </summary>
     ExternalCommunicator coord;
 
-    [Tooltip("This must be the bytes file corresponding to the pretrained Tensorflow graph.")]
+    [Tooltip("The bytes file containing the pre-trained Tensorflow graph.")]
     /// Modify only in inspector : Reference to the Graph asset
     public TextAsset graphModel;
 
-    /// Modify only in inspector : If a scope was used when training the model, specify it here
+    /// Modify only in inspector : If a scope was used when
+    /// training the model, specify it here
     public string graphScope;
+
+    /// Modify only in inspector : If your graph takes additional inputs 
+    /// that are fixed you can specify them here.
     [SerializeField]
-    [Tooltip("If your graph takes additional inputs that are fixed (example: noise level) you can specify them here.")]
-    ///  Modify only in inspector : If your graph takes additional inputs that are fixed you can specify them here.
-    private TensorFlowAgentPlaceholder[] graphPlaceholders;
-    ///  Modify only in inspector : Name of the placholder of the batch size
+    [Tooltip("If your graph takes additional inputs that are fixed " +
+             "(example: noise level) you can specify them here.")]
+    TensorFlowAgentPlaceholder[] graphPlaceholders;
+
+    /// Modify only in inspector : Name of the placholder of the batch size
     public string BatchSizePlaceholderName = "batch_size";
-    ///  Modify only in inspector : Name of the state placeholder
+
+    /// Modify only in inspector : Name of the state placeholder
     public string StatePlacholderName = "state";
-    ///  Modify only in inspector : Name of the recurrent input
+
+    /// Modify only in inspector : Name of the recurrent input
     public string RecurrentInPlaceholderName = "recurrent_in";
-    ///  Modify only in inspector : Name of the recurrent output
+
+    /// Modify only in inspector : Name of the recurrent output
     public string RecurrentOutPlaceholderName = "recurrent_out";
+
     /// Modify only in inspector : Names of the observations placeholders
     public string[] ObservationPlaceholderName;
+
     /// Modify only in inspector : Name of the action node
     public string ActionPlaceholderName = "action";
+
 #if ENABLE_TENSORFLOW
     TFGraph graph;
     TFSession session;
@@ -76,16 +90,18 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
     float[,] inputOldMemories;
 #endif
 
-    /// Reference to the brain that uses this CoreBrainInternal
+    /// <summary>
+    /// Reference to the brain that uses this CoreBrainExternal.
+    /// </summary>
     public Brain brain;
 
-    /// Create the reference to the brain
+    /// <summary> <inheritdoc/> </summary>
     public void SetBrain(Brain b)
     {
         brain = b;
     }
 
-    /// Loads the tensorflow graph model to generate a TFGraph object
+    /// <summary> <inheritdoc/> </summary>
     public void InitializeCoreBrain()
     {
 #if ENABLE_TENSORFLOW
@@ -99,54 +115,47 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
 			
 		}
 #endif
-        if ((brain.gameObject.transform.parent.gameObject.GetComponent<Academy>().communicator == null)
-        || (!broadcast))
+        Academy academy = brain.gameObject.transform.parent.gameObject
+               .GetComponent<Academy>();
+        if (!academy.IsCommunicatorOn() || !broadcast)
         {
             coord = null;
         }
-        else if (brain.gameObject.transform.parent.gameObject.GetComponent<Academy>().communicator is ExternalCommunicator)
+        else if (academy.GetCommunicator() is ExternalCommunicator)
         {
-            coord = (ExternalCommunicator)brain.gameObject.transform.parent.gameObject.GetComponent<Academy>().communicator;
+            coord = (ExternalCommunicator)academy.GetCommunicator();
             coord.SubscribeBrain(brain);
         }
 
         if (graphModel != null)
         {
-
             graph = new TFGraph();
 
             graph.Import(graphModel.bytes);
 
             session = new TFSession(graph);
 
-            if ((graphScope.Length > 1) && (graphScope[graphScope.Length - 1] != '/'))
+            if ((graphScope.Length > 1) &&
+                (graphScope[graphScope.Length - 1] != '/'))
             {
                 graphScope = graphScope + '/';
             }
 
-            if (graph[graphScope + BatchSizePlaceholderName] != null)
-            {
-                hasBatchSize = true;
-            }
-            if ((graph[graphScope + RecurrentInPlaceholderName] != null) && (graph[graphScope + RecurrentOutPlaceholderName] != null))
-            {
-                hasRecurrent = true;
-
-            }
-            if (graph[graphScope + StatePlacholderName] != null)
-            {
-                hasState = true;
-            }
-            if (graph[graphScope + "value_estimate"] != null)
-            {
-                hasValue = true;
-            }
+            hasBatchSize |=
+                graph[graphScope + BatchSizePlaceholderName] != null;
+            hasRecurrent |=
+                ((graph[graphScope + RecurrentInPlaceholderName] != null) &&
+                 (graph[graphScope + RecurrentOutPlaceholderName] != null));
+            hasState |=
+                graph[graphScope + StatePlacholderName] != null;
+            hasValue |=
+                graph[graphScope + "value_estimate"] != null;
         }
 #endif
     }
 
 
-    /// Collects information from the agents and store them
+    /// <summary> <inheritdoc/> </summary>
     public void SendState()
     {
 #if ENABLE_TENSORFLOW
@@ -154,7 +163,6 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
         currentBatchSize = brain.agents.Count;
         if (currentBatchSize == 0)
         {
-
             if (coord != null)
             {
                 coord.SendBrainInfo(brain);
@@ -167,12 +175,14 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
         if (hasState)
         {
             Dictionary<int, List<float>> states = brain.CollectStates();
-            inputState = new float[currentBatchSize, brain.brainParameters.stateSize * brain.brainParameters.stackedStates];
+            int inputSize = brain.brainParameters.stateSize *
+                                 brain.brainParameters.stackedStates;
+            inputState = new float[currentBatchSize, inputSize];
             var i = 0;
             foreach (int k in agentKeys)
             {
                 List<float> state_list = states[k];
-                for (int j = 0; j < brain.brainParameters.stateSize * brain.brainParameters.stackedStates; j++)
+                for (int j = 0; j < inputSize; j++)
                 {
 
                     inputState[i, j] = state_list[j];
@@ -181,7 +191,6 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
             }
         }
 
-
         // Create the observation tensors
         observationMatrixList = brain.GetObservationMatrixList(agentKeys);
 
@@ -189,7 +198,8 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
         if (hasRecurrent)
         {
             Dictionary<int, float[]> old_memories = brain.CollectMemories();
-            inputOldMemories = new float[currentBatchSize, brain.brainParameters.memorySize];
+            inputOldMemories =
+                new float[currentBatchSize, brain.brainParameters.memorySize];
             var i = 0;
             foreach (int k in agentKeys)
             {
@@ -212,8 +222,7 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
     }
 
 
-    /// Uses the stored information to run the tensorflow graph and generate 
-    /// the actions.
+    /// <summary> <inheritdoc/> </summary>
     public void DecideAction()
     {
 #if ENABLE_TENSORFLOW
@@ -229,33 +238,55 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
         }
         catch
         {
-            throw new UnityAgentsException(string.Format(@"The node {0} could not be found. Please make sure the graphScope {1} is correct",
-                     graphScope + ActionPlaceholderName, graphScope));
+            throw new UnityAgentsException(
+                string.Format(
+                    @"The node {0} could not be found. Please make sure the
+                        graphScope {1} is correct",
+                    graphScope + ActionPlaceholderName,
+                    graphScope));
         }
 
         if (hasBatchSize)
         {
-            runner.AddInput(graph[graphScope + BatchSizePlaceholderName][0], new int[] { currentBatchSize });
+            runner.AddInput(graph[graphScope + BatchSizePlaceholderName][0],
+                            new int[] { currentBatchSize });
         }
 
         foreach (TensorFlowAgentPlaceholder placeholder in graphPlaceholders)
         {
             try
             {
-                if (placeholder.valueType == TensorFlowAgentPlaceholder.tensorType.FloatingPoint)
+                if (placeholder.valueType ==
+                    TensorFlowAgentPlaceholder.TensorType.FloatingPoint)
                 {
-                    runner.AddInput(graph[graphScope + placeholder.name][0], new float[] { Random.Range(placeholder.minValue, placeholder.maxValue) });
+                    runner.AddInput(
+                        graph[graphScope + placeholder.name][0],
+                        new float[] { Random.Range(placeholder.minValue,
+                                                   placeholder.maxValue)
+                                    }
+                    );
                 }
-                else if (placeholder.valueType == TensorFlowAgentPlaceholder.tensorType.Integer)
+                else if (placeholder.valueType ==
+                         TensorFlowAgentPlaceholder.TensorType.Integer)
                 {
-                    runner.AddInput(graph[graphScope + placeholder.name][0], new int[] { Random.Range((int)placeholder.minValue, (int)placeholder.maxValue + 1) });
+                    runner.AddInput(
+                        graph[graphScope + placeholder.name][0],
+                        new int[] { Random.Range((int)placeholder.minValue,
+                                                 (int)placeholder.maxValue + 1)
+                                  }
+                    );
                 }
             }
             catch
             {
-                throw new UnityAgentsException(string.Format(@"One of the Tensorflow placeholder cound nout be found.
-                In brain {0}, there are no {1} placeholder named {2}.",
-                        brain.gameObject.name, placeholder.valueType.ToString(), graphScope + placeholder.name));
+                throw new UnityAgentsException(
+                    string.Format(
+                        @"One of the Tensorflow placeholder could not be 
+                            found. In brain {0}, there is no {1} placeholder 
+                            named {2}.",
+                        brain.gameObject.name,
+                        placeholder.valueType.ToString(),
+                        graphScope + placeholder.name));
             }
         }
 
@@ -269,11 +300,13 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
                 {
                     discreteInputState[i, 0] = (int)inputState[i, 0];
                 }
-                runner.AddInput(graph[graphScope + StatePlacholderName][0], discreteInputState);
+                runner.AddInput(graph[graphScope + StatePlacholderName][0],
+                                discreteInputState);
             }
             else
             {
-                runner.AddInput(graph[graphScope + StatePlacholderName][0], inputState);
+                runner.AddInput(graph[graphScope + StatePlacholderName][0],
+                                inputState);
             }
         }
 
@@ -394,7 +427,7 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
 #endif
     }
 
-    /// Displays the parameters of the CoreBrainInternal in the Inspector 
+    /// <summary> <inheritdoc/> </summary>
     public void OnInspector()
     {
 #if ENABLE_TENSORFLOW && UNITY_EDITOR
@@ -446,7 +479,7 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
 
         if (brain.brainParameters.cameraResolutions != null)
         {
-            if (brain.brainParameters.cameraResolutions.Count() > 0)
+            if (brain.brainParameters.cameraResolutions.Any())
             {
                 if (ObservationPlaceholderName == null)
                 {
@@ -489,5 +522,4 @@ public class CoreBrainInternal : ScriptableObject, CoreBrain
         serializedBrain.ApplyModifiedProperties();
 #endif
     }
-
 }

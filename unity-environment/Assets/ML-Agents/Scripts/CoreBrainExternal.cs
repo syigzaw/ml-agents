@@ -1,41 +1,52 @@
 ﻿using UnityEngine;
 
 /// CoreBrain which decides actions via communication with an external system such as Python.
+/// 
+/// <summary>
+/// Core Brain that is controlled based on the external communicator. It
+/// is the primary mode used for training and for enabling custom training
+/// and inference algorithms.
+/// </summary>
 public class CoreBrainExternal : ScriptableObject, CoreBrain
 {
-    /**< Reference to the brain that uses this CoreBrainExternal */
+    /// <summary>
+    /// Reference to the brain that uses this CoreBrainExternal.
+    /// </summary>
     public Brain brain;
 
+    /// <summary>
+    /// External communicator used for sending and receiving messages.
+    /// </summary>
     ExternalCommunicator coord;
 
-    /// Creates the reference to the brain
+    /// <summary> <inheritdoc/> </summary>
     public void SetBrain(Brain b)
     {
         brain = b;
     }
 
-    /// Generates the communicator for the Academy if none was present and
-    ///  subscribe to ExternalCommunicator if it was present.
+    /// <summary> <inheritdoc/> </summary>
     public void InitializeCoreBrain()
     {
-        if (brain.gameObject.transform.parent.gameObject.GetComponent<Academy>().communicator == null)
+        Academy academy = brain.gameObject.transform.parent.gameObject
+                       .GetComponent<Academy>();
+        if (!academy.IsCommunicatorOn())
         {
             coord = null;
-            throw new UnityAgentsException(string.Format("The brain {0} was set to" +
-                " External mode" +
-                " but Unity was unable to read the" +
-                " arguments passed at launch.", brain.gameObject.name));
+            throw new UnityAgentsException(
+                string.Format(
+                    @"The brain {0} was set to External mode but Unity was 
+                        unable to read the arguments passed at launch.",
+                    brain.gameObject.name));
         }
-        else if (brain.gameObject.transform.parent.gameObject.GetComponent<Academy>().communicator is ExternalCommunicator)
+        if (academy.GetCommunicator() is ExternalCommunicator)
         {
-            coord = (ExternalCommunicator)brain.gameObject.transform.parent.gameObject.GetComponent<Academy>().communicator;
+            coord = (ExternalCommunicator)academy.GetCommunicator();
             coord.SubscribeBrain(brain);
         }
-
     }
 
-    /// Uses the communicator to retrieve the actions, memories and values and
-    ///  sends them to the agents
+    /// <summary> <inheritdoc/> </summary>
     public void DecideAction()
     {
         if (coord != null)
@@ -46,8 +57,7 @@ public class CoreBrainExternal : ScriptableObject, CoreBrain
         }
     }
 
-    /// Uses the communicator to send the states, observations, rewards and
-    ///  dones outside of Unity
+    /// <summary> <inheritdoc/> </summary>
     public void SendState()
     {
         if (coord != null)
@@ -56,9 +66,9 @@ public class CoreBrainExternal : ScriptableObject, CoreBrain
         }
     }
 
-    /// Nothing needs to appear in the inspector 
+    /// <summary> <inheritdoc/> </summary>
     public void OnInspector()
     {
-
+        // Nothing needed.
     }
 }

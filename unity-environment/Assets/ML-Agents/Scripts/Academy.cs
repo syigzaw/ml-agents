@@ -4,11 +4,16 @@ using UnityEngine;
 
 /*! \mainpage ML-Agents Index Page
  * Welcome to Unity Machine Learning Agents documentation.
+ * 
+ * Glossary:
+ *  - Editor: Any pane (e.g. Hierarchy, Scene) of the Unity Editor.
+ *  - Trainer: Abstract term representing the entity within the Python API
+ *      that trains the Agents behavior.
  */
 
 /// <summary>
 /// Wraps the environment-level parameters that are provided within the
-/// Inspector. These parameters can be provided for training and inference
+/// Editor. These parameters can be provided for training and inference
 /// modes separately and represent screen resolution, rendering quality and
 /// frame rate.
 /// </summary>
@@ -80,7 +85,7 @@ public class EnvironmentConfiguration
 public abstract class Academy : MonoBehaviour
 {
     /// Struct used to enable specifiying the reset parameters (as key-value 
-    /// pairs) within the Inspector.
+    /// pairs) within the Editor.
     [System.Serializable]
     struct ResetParameter
     {
@@ -128,7 +133,7 @@ public abstract class Academy : MonoBehaviour
     /// to modify elements in the environment at reset time.
     /// <summary/>
     /// <remarks>
-    /// Default reset parameters are specified in the academy Inspector via
+    /// Default reset parameters are specified in the academy Editor via
     /// <see cref="defaultResetParameters"/>. 
     /// They can be modified when training with an external Brain by passing
     /// a config dictionary at reset. 
@@ -142,7 +147,7 @@ public abstract class Academy : MonoBehaviour
     bool isInference = true;
 
     /// List of Brains represented in the academy. These will be the brains
-    /// that are specified as children of the academy in the Inspector.
+    /// that are specified as children of the academy in the Editor.
     List<Brain> brains = new List<Brain>();
 
     /// Stores the last command received from the Communicator.
@@ -191,7 +196,7 @@ public abstract class Academy : MonoBehaviour
     bool modeSwitched;
 
     /// Pointer to the communicator currently in use by the Academy.
-    public Communicator communicator;
+    Communicator communicator;
 
     /// <summary>
     /// Monobehavior function called at the very beginning of environment
@@ -201,7 +206,7 @@ public abstract class Academy : MonoBehaviour
     /// </summary>
     void Awake()
     {
-        // Load in default parameters (provided in Inspector).
+        // Load in default parameters (provided in Editor).
         LoadResetParameters(defaultResetParameters, this.resetParameters);
 
         // Initialize Academy and Brains.
@@ -231,7 +236,7 @@ public abstract class Academy : MonoBehaviour
         done = true;
 
         // Configure the environment using the configurations provided by
-        // the developer in the Inspector.
+        // the developer in the Editor.
         ConfigureEnvironment();
     }
 
@@ -247,7 +252,7 @@ public abstract class Academy : MonoBehaviour
 
     /// <summary>
     /// Configures the environment settings depending on the training/inference
-    /// mode and the corresponding parameters passed in the Inspector.
+    /// mode and the corresponding parameters passed in the Editor.
     /// </summary>
     void ConfigureEnvironment()
     {
@@ -269,7 +274,7 @@ public abstract class Academy : MonoBehaviour
     /// configuration.
     /// </summary>
     /// <param name="config">
-    /// Environment configuration (specified in the Inspector).
+    /// Environment configuration (specified in the Editor).
     /// </param>
     static void ConfigureEnvironmentHelper(EnvironmentConfiguration config)
     {
@@ -326,6 +331,26 @@ public abstract class Academy : MonoBehaviour
     public bool IsDone()
     {
         return done;
+    }
+
+    /// <summary>
+    /// Returns whether or not the communicator is on.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c>, if communicator is on, <c>false</c> otherwise.
+    /// </returns>
+    public bool IsCommunicatorOn()
+    {
+        return isCommunicatorOn;
+    }
+
+    /// <summary>
+    /// Returns the Communicator currently used by the Academy.
+    /// </summary>
+    /// <returns>The commincator currently in use (may be null).</returns>
+    public Communicator GetCommunicator()
+    {
+        return communicator;
     }
 
     /// <summary>
@@ -518,7 +543,7 @@ public abstract class Academy : MonoBehaviour
 
     /// <summary>
     /// Helper method that loads the Brain objects that are currently
-    /// specified as children of the Academy within the Inspector.
+    /// specified as children of the Academy within the Editor.
     /// </summary>
     /// <param name="academy">Academy.</param>
     /// <param name="brains">Placeholder object to load the brains to.</param>

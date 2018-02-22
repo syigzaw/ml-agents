@@ -58,7 +58,7 @@ public abstract class Agent : MonoBehaviour
              "the inspector using the Editor.")]
     /// <summary>
     /// The Brain attached to this agent. A brain can
-    /// be attached either directly from the Inspector or programmatically
+    /// be attached either directly from the Editor or programmatically
     /// through <see cref="GiveBrain"/>. It is OK for an agent to not have
     /// a brain, as long as no decision is requested.
     /// </summary>
@@ -126,8 +126,8 @@ public abstract class Agent : MonoBehaviour
 
     /// The current value estimate of the agent. An external Brain can pass
     /// the value estimate to the agent at every step. If Monitor is
-    /// attached to the agent, this value will be visualized in the 
-    /// Unity Editor during inference mode.
+    /// attached to the agent, this value will be visualized in the Editor
+    /// during inference mode.
     [HideInInspector]
     public float value;
 
@@ -149,7 +149,7 @@ public abstract class Agent : MonoBehaviour
     /// Used by the Trainer to store information about the agent. This data
     /// structure is not consumed or modified by the agent directly, they are
     /// just the owners of their trainiers memory. Currently, however, the
-    /// size of the memory is in the Inspector properties for the Brain.
+    /// size of the memory is in the Editor properties for the Brain.
     [HideInInspector]
     public float[] memory;
 

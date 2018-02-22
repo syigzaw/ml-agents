@@ -2,19 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/** \brief An interface which defines the functions needed for a CoreBrain. */
-/** There is no need to modify or implement CoreBrain to create a Unity environment.
- */
+/// <summary>
+/// Interface which defines the functions needed for a CoreBrain.
+/// </summary>
 public interface CoreBrain
 {
+    /// <summary>
     /// Implement setBrain so let the coreBrain know what brain is using it
+    /// </summary>
     void SetBrain(Brain b);
+
+    /// <summary>
     /// Implement this method to initialize CoreBrain
+    /// </summary>
     void InitializeCoreBrain();
+
+    /// <summary>
     /// Implement this method to define the logic for deciding actions
+    /// </summary>
     void DecideAction();
+
+    /// <summary>
     /// Implement this method to define the logic for sending the actions
+    /// </summary>
     void SendState();
-    /// Implement this method to define what should be displayed in the brain Inspector
+
+    /// <summary>
+    /// Implement this method to define what should be displayed in the brain
+    /// Editor.
+    /// </summary>
     void OnInspector();
 }

@@ -9,7 +9,7 @@ public struct AcademyParameters
 {
     /// <summary>
     /// The name of the Academy GameObject as defined by the user in the
-    /// Unity Editor.
+    /// Editor.
     /// </summary>
     public string AcademyName;
 
@@ -35,7 +35,7 @@ public struct AcademyParameters
 
     /// <summary>
     /// A list of the names of all the Brain GameObjects specified as children
-    /// of the Academy GameObject within the Unity Editor.
+    /// of the Academy GameObject within the Editor.
     /// </summary>
     public List<string> brainNames;
 
@@ -50,7 +50,7 @@ public struct AcademyParameters
 
     /// <summary>
     /// A list of the names of all the External Brain GameObjects specified as
-    /// children of the Academy GameObject within the Unity Editor. This list
+    /// children of the Academy GameObject within the Editor. This list
     /// will contain a subset of the names in <see cref="brainNames"/>.
     /// </summary>
     public List<string> externalBrainNames;

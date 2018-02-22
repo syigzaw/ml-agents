@@ -505,7 +505,7 @@ public class ExternalCommunicator : Communicator
         SendLongMessage(JsonUtility.ToJson(stepMessageBuffer));
         ReceiveShortMessage();
         int i = 0;
-        foreach (resolution res in brain.brainParameters.cameraResolutions)
+        foreach (Resolution res in brain.brainParameters.cameraResolutions)
         {
             foreach (int agentId in brainAgents[brainName])
             {
