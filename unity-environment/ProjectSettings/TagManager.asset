@@ -44,9 +44,9 @@ TagManager:
   - strikerWall
   - striker
   - ground
-  - 
-  - 
-  - 
+  - postProcessing
+  - bone
+  - wall
   - 
   - 
   - 

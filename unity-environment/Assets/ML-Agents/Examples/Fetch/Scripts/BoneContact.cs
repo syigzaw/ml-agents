@@ -19,7 +19,7 @@ public class BoneContact : MonoBehaviour
             if(!agent.hasBone)
             {
                 agent.shouldPickUpBone = true;
-                agent.TouchedTarget();
+                // agent.TouchedTarget();
                 // agent.PickUpBone();
             }
 		}

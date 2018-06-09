@@ -120,159 +120,20 @@ public class DogAgent : Agent {
     public Transform mouthPosition;
 
 
+    public bool trainingMode;
+    public bool gameMode;
+
     JointDriveController jdController;
-//force = spring * (targetPosition - position) + damping * (targetVelocity - velocity)
 
-
-    // /// <summary>
-    // /// Used to store relevant information for acting and learning for each body part in agent.
-    // /// </summary>
-    // [System.Serializable]
-    // public class BodyPart
-    // {
-    //     public ConfigurableJoint joint;
-    //     public Rigidbody rb;
-    //     public Vector3 startingPos;
-    //     public Quaternion startingWorldRot;
-    //     public Quaternion startingLocalRot;
-    //     public DogContact groundContact;
-	// 	public DogAgent agent;
-    //     public Vector3 previousJointRotation;
-    //     public float previousSpringValue;
-
-    //     /// <summary>
-    //     /// Reset body part to initial configuration.
-    //     /// </summary>
-    //     public void Reset()
-    //     {
-    //         rb.transform.position = startingPos;
-    //         rb.transform.rotation = startingWorldRot;
-    //         rb.velocity = Vector3.zero;
-    //         rb.angularVelocity = Vector3.zero;
-	// 		groundContact.touchingGround = false;;
-    //     }
-        
-    //     /// <summary>
-    //     /// Apply torque according to defined goal `x, y, z` angle and force `strength`.
-    //     /// </summary>
-    //     public void SetNormalizedTargetRotation(float x, float y, float z)
-    //     {
-    //         // Transform values from [-1, 1] to [0, 1]
-    //         x = (x + 1f) * 0.5f;
-    //         y = (y + 1f) * 0.5f;
-    //         z = (z + 1f) * 0.5f;
-        
-    //         // var newX = Mathf.Lerp(joint.lowAngularXLimit.limit, joint.highAngularXLimit.limit, x);
-    //         // var newX = Mathf.Lerp(previousJointRotation.x, joint.lowAngularXLimit.limit, joint.highAngularXLimit.limit, x);
-    //         // var xRot = Mathf.MoveTowards(previousJointRotation.x, , agent.maxJointAngleChangePerDecision);
-    //         // var yRot = Mathf.MoveTowards(previousJointRotation.y, Mathf.Lerp(-joint.angularYLimit.limit, joint.angularYLimit.limit, y), agent.maxJointAngleChangePerDecision);
-    //         // var zRot = Mathf.MoveTowards(previousJointRotation.z, Mathf.Lerp(-joint.angularZLimit.limit, joint.angularZLimit.limit, z), agent.maxJointAngleChangePerDecision);
-    //         var xRot = Mathf.MoveTowards(previousJointRotation.x, Mathf.Lerp(joint.lowAngularXLimit.limit, joint.highAngularXLimit.limit, x), agent.maxJointAngleChangePerDecision);
-    //         var yRot = Mathf.MoveTowards(previousJointRotation.y, Mathf.Lerp(-joint.angularYLimit.limit, joint.angularYLimit.limit, y), agent.maxJointAngleChangePerDecision);
-    //         var zRot = Mathf.MoveTowards(previousJointRotation.z, Mathf.Lerp(-joint.angularZLimit.limit, joint.angularZLimit.limit, z), agent.maxJointAngleChangePerDecision);
-
-    //         // var xRot = Mathf.MoveTowards(joint.lowAngularXLimit.limit, joint.highAngularXLimit.limit, x);
-    //         // var xRot = Mathf.Lerp(joint.lowAngularXLimit.limit, joint.highAngularXLimit.limit, x);
-    //         // var xRot = Mathf.Lerp(previousJointRotation.x, joint.highAngularXLimit.limit, x);
-    //         // var yRot = Mathf.Lerp(-joint.angularYLimit.limit, joint.angularYLimit.limit, y);
-    //         // var zRot = Mathf.Lerp(-joint.angularZLimit.limit, joint.angularZLimit.limit, z);
-    //         // if(joint == agent.bodyParts[agent.leg0_upper].joint)
-    //         // {
-    //         // // if(agent.isNewDecisionStep)
-    //         // // {
-    //         // //     print("NEW DECISION");
-    //         // // }
-    //         //     print("Time: " + Time.time + "xRot: " + xRot + " yRot: " + yRot + " zRot: " + zRot);
-    //         // }
-
-    //         joint.targetRotation = Quaternion.Euler(xRot, yRot, zRot);
-    //         previousJointRotation = new Vector3(xRot, yRot, zRot);
-
-
-    //         // // var spring = Mathf.MoveTowards(previousSpringValue, (strength + 1f) * 0.5f, agent.maxJointStrengthChangePerDecision);
-    //         // var rawSpringVal = ((strength + 1f) * 0.5f) * agent.maxJointSpring;
-    //         // var clampedSpring = Mathf.MoveTowards(previousSpringValue, rawSpringVal, agent.maxJointStrengthChangePerDecision);
-    //         // var jd = new JointDrive
-    //         // {
-    //         //     // positionSpring = ((strength + 1f) * 0.5f) * agent.maxJointSpring,
-    //         //     // positionSpring = ((strength + 1f) * 0.5f) * agent.maxJointSpring,
-    //         //     // positionSpring = spring * agent.maxJointSpring,
-    //         //     positionSpring = clampedSpring,
-	// 		// 	positionDamper = agent.jointDampen,
-    //         //     maximumForce = agent.maxJointForceLimit
-    //         // };
-    //         // joint.slerpDrive = jd;
-
-    //         // previousSpringValue = jd.positionSpring;
-    //     }
-
-
-    //     public void UpdateJointDrive(float strength)
-    //     {
-
-    //         // var spring = Mathf.MoveTowards(previousSpringValue, (strength + 1f) * 0.5f, agent.maxJointStrengthChangePerDecision);
-    //         var rawSpringVal = ((strength + 1f) * 0.5f) * agent.maxJointSpring;
-    //         var clampedSpring = Mathf.MoveTowards(previousSpringValue, rawSpringVal, agent.maxJointStrengthChangePerDecision);
-    //         agent.energyPenalty += clampedSpring/agent.maxJointStrengthChangePerDecision;
-    //         var jd = new JointDrive
-    //         {
-    //             // positionSpring = ((strength + 1f) * 0.5f) * agent.maxJointSpring,
-    //             // positionSpring = ((strength + 1f) * 0.5f) * agent.maxJointSpring,
-    //             // positionSpring = spring * agent.maxJointSpring,
-    //             positionSpring = clampedSpring,
-	// 			positionDamper = agent.jointDampen,
-    //             maximumForce = agent.maxJointForceLimit
-    //         };
-    //         joint.slerpDrive = jd;
-
-    //         // previousJointRotation = new Vector3(xRot, yRot, zRot);
-    //         previousSpringValue = jd.positionSpring;
-    //     }
-
-
-
-    // }
-
-    // /// <summary>
-    // /// Create BodyPart object and add it to dictionary.
-    // /// </summary>
-    // public void SetupBodyPart(Transform t)
-    // {
-    //     BodyPart bp = new BodyPart
-    //     {
-    //         rb = t.GetComponent<Rigidbody>(),
-    //         joint = t.GetComponent<ConfigurableJoint>(),
-    //         startingPos = t.position,
-    //         startingWorldRot = t.rotation,
-    //         startingLocalRot = t.localRotation
-    //     };
-	// 	bp.rb.maxAngularVelocity = 100;
-    //     bodyParts.Add(t, bp);
-    //     bp.groundContact = t.GetComponent<DogContact>();
-	// 	bp.agent = this;
-    //     bodyPartsList.Add(bp);
-    // }
-
-
-    void ShiftCoM()
-    {
-
-        //we want a lower center of mass or the crawler will roll over easily. 
-        //these settings shift the COM on the lower legs
-		jdController.bodyPartsDict[leg0_lower].rb.centerOfMass = footCenterOfMassShift;
-		jdController.bodyPartsDict[leg1_lower].rb.centerOfMass = footCenterOfMassShift;
-		jdController.bodyPartsDict[leg2_lower].rb.centerOfMass = footCenterOfMassShift;
-		jdController.bodyPartsDict[leg3_lower].rb.centerOfMass = footCenterOfMassShift;
-		jdController.bodyPartsDict[body].rb.centerOfMass = bodyCenterOfMassShift;
-    }
 
     void Awake()
     // void InitializeAgent()
     {
         AllStatesFalse();
-        target = leg3_lower;
+        // target = leg2_lower;
         // shouldIdle = true;
         boneController = FindObjectOfType<ThrowBone>();
+        target = boneController.returnPoint;
                 // Get the ground's bounds
         spawnAreaBounds = spawnArea.GetComponent<Collider>().bounds;
                 closestDistanceToTargetSoFarSqrMag = 10000;
@@ -297,10 +158,8 @@ public class DogAgent : Agent {
         allRBs.AddRange(gameObject.GetComponentsInChildren<Rigidbody>());
         currentDecisionStep = 1;
     }
-    // //Initialize
-    // public override void InitializeAgent()
-    // {
-    // }
+
+
 
     /// <summary>
     /// Use the ground's bounds to pick a random spawn position.
@@ -330,21 +189,27 @@ public class DogAgent : Agent {
 
     public void PickUpBone()
     {
-        if(Application.isEditor && boneController)
-        {
+        // if(Application.isEditor && boneController)
+        // {
+            print("PickUpBone()");
             hasBone = true;
             boneController.boneCol.enabled = false;
             boneController.boneRB.isKinematic = true;
             boneController.bone.position = mouthPosition.position;
             boneController.bone.rotation = mouthPosition.rotation;
             boneController.bone.SetParent(mouthPosition);
-        }
+
+
+            target = boneController.returnPoint;
+            returningBone = true;
+        // }
 
         // TouchedTarget();
     }
 
     public void DropBone()
     {
+            print("DropBone()");
         if(boneController)
         {
             boneController.boneRB.isKinematic = false;
@@ -361,168 +226,26 @@ public class DogAgent : Agent {
     // public void CollectObservationBodyPart(BodyPart bp)
     public void CollectObservationBodyPart(BodyPart bp)
     {
-        ShiftCoM();
         var rb = bp.rb;
         AddVectorObs(bp.groundContact.touchingGround ? 1 : 0); // Is this bp touching the ground
-
-        // AddVectorObs(rb.velocity);
-        // AddVectorObs(rb.angularVelocity);
         if(bp.rb.transform != body)
         {
 
             AddVectorObs(bp.currentXNormalizedRot);
             AddVectorObs(bp.currentYNormalizedRot);
             AddVectorObs(bp.currentZNormalizedRot);
-            // AddVectorObs(Quaternion.FromToRotation(hips.forward, bp.rb.transform.forward));
             AddVectorObs(bp.currentStrength/jdController.maxJointForceLimit);
-            // AddVectorObs(Quaternion.FromToRotation(hips.forward, bp.rb.transform.rotation.eulerAngles));
-
-
-        // // if(bp == leg0_upper || bp == leg1_upper || bp == leg2_upper || bp == leg3_upper )
-        // // {
-        //     AddVectorObs(rb.velocity);
-        //     AddVectorObs(rb.angularVelocity);
-        //     // Vector3 localPosRelToBody = body.InverseTransformPoint(rb.position);
-        //     // AddVectorObs(localPosRelToBody);
-        //     // AddVectorObs(Quaternion.FromToRotation(body.forward, rb.transform.forward)); //-forward is local up because capsule is rotated
-        //     AddVectorObs(Quaternion.FromToRotation(jdController.bodyPartsDict[bp].joint.connectedBody.transform.forward, rb.transform.forward)); //-forward is local up because capsule is rotated
-        //     // AddVectorObs(Quaternion.FromToRotation(body.right, rb.transform.forward)); //-forward is local up because capsule is rotated
-        //     // AddVectorObs(Quaternion.FromToRotation(-body.forward, rb.transform.forward)); //-forward is local up because capsule is rotated
         }
-
-        // if(bp.rb.transform != body)
-        // {
-        //     // AddVectorObs(body.localRotation); //the capsule is rotated so this is local forward
-
-        //     AddVectorObs(Quaternion.FromToRotation(-body.forward, bp.rb.transform.forward)); //-forward is local up because capsule is rotated
-        //     // // AddVectorObs(Quaternion.FromToRotation(body.forward, bp.rb.transform.forward));
-        //     // AddVectorObs(Quaternion.FromToRotation(body.up, bp.rb.transform.forward));  //up is local forward because capsule is rotated
-        // }
-    }
-
-
-
-    // /// <summary>
-    // /// Add relevant information on each body part to observations.
-    // /// </summary>
-    // public void CollectObservationBodyPart(BodyPart bp)
-    // {
-    //     ShiftCoM();
-    //     var rb = bp.rb;
-    //     AddVectorObs(bp.groundContact.touchingGround ? 1 : 0); // Is this bp touching the ground
-
-    //     // AddVectorObs(rb.velocity);
-    //     // AddVectorObs(rb.angularVelocity);
-    //     Vector3 localPosRelToBody = body.InverseTransformPoint(rb.position);
-    //     AddVectorObs(localPosRelToBody);
-
-    //     if(bp.rb.transform != body)
-    //     {
-    //         // AddVectorObs(body.localRotation); //the capsule is rotated so this is local forward
-
-    //         // AddVectorObs(Quaternion.FromToRotation(-body.forward, bp.rb.transform.forward));
-    //         // // AddVectorObs(Quaternion.FromToRotation(body.forward, bp.rb.transform.forward));
-    //         AddVectorObs(Quaternion.FromToRotation(body.up, bp.rb.transform.forward));  //up is local forward because capsule is rotated
-    //     }
-    // }
-
-    // void FixedUpdate()
-    // {
-    //     //update pos to target
-	// 	dirToTarget = target.position - bodyParts[body].rb.position;
-
-    //     //if enabled the feet will light up green when the foot is grounded.
-    //     //this is just a visualization and isn't necessary for function
-    //     if(useFootGroundedVisualization)
-    //     {
-    //         foot0.material = bodyParts[leg0_lower].groundContact.touchingGround? groundedMaterial: unGroundedMaterial;
-    //         foot1.material = bodyParts[leg1_lower].groundContact.touchingGround? groundedMaterial: unGroundedMaterial;
-    //         foot2.material = bodyParts[leg2_lower].groundContact.touchingGround? groundedMaterial: unGroundedMaterial;
-    //         foot3.material = bodyParts[leg3_lower].groundContact.touchingGround? groundedMaterial: unGroundedMaterial;
-    //     }
-    // }
-
-	/// <summary>
-    /// Adds the raycast hit dist and relative pos to observations
-    /// </summary>
-    void RaycastObservation(Vector3 pos, Vector3 dir, float maxDist)
-    {
-        RaycastHit hit;
-        float dist = 0;
-        Vector3 relativeHitPos = Vector3.zero;
-        if(Physics.Raycast(pos, dir, out hit, maxDist))
-        {
-            if(hit.collider.CompareTag("ground"))
-            {
-                //normalized hit distance
-                dist = hit.distance/maxDist; 
-
-                //hit point position relative to the body's local space
-                relativeHitPos = body.InverseTransformPoint(hit.point); 
-                // relativeHitPos = body.InverseTransformPoint(hit.point); 
-                // print(hit.collider.gameObject.name);
-            }
-        }
-
-        //add our raycast observation 
-        AddVectorObs(dist);
-        AddVectorObs(relativeHitPos);
     }
 
     public override void CollectObservations()
     {
-        //normalize dir vector to help generalize
-        // AddVectorObs(dirToTarget);
         AddVectorObs(dirToTarget.normalized);
-        // AddVectorObs(body.InverseTransformPoint(target.position));
-        // AddVectorObs(ground.InverseTransformPoint(target.position));
-        // AddVectorObs(target.position - ground.position);
-        // AddVectorObs(jdController.bodyPartsDict[body].rb.position - ground.position);
-        // AddVectorObs(ground.InverseTransformPoint(target.position).normalized);
-        // AddVectorObs(ground.InverseTransformPoint(jdController.bodyPartsDict[body].rb.position).normalized);
-        // AddVectorObs(ground.InverseTransformPoint(jdController.bodyPartsDict[body].rb.position));
-        // AddVectorObs(dirToTarget.normalized);
-
-
         AddVectorObs(body.localPosition);
         AddVectorObs(jdController.bodyPartsDict[body].rb.velocity);
         AddVectorObs(jdController.bodyPartsDict[body].rb.angularVelocity);
-        // AddVectorObs(GetAvgCenterOfMassForAllRBs());
-
-        // //raycast out of the bottom of the legs to get information about where the ground is
-        // RaycastObservation(leg0_lower.position, leg0_lower.up, 1);
-        // RaycastObservation(leg1_lower.position, leg1_lower.up, 1);
-        // RaycastObservation(leg2_lower.position, leg2_lower.up, 1);
-        // RaycastObservation(leg3_lower.position, leg3_lower.up, 1);
-
-        //forward & up to help with orientation
-        // AddVectorObs(-body.forward); //this is local up
         AddVectorObs(body.forward); //the capsule is rotated so this is local forward
         AddVectorObs(body.up); //the capsule is rotated so this is local forward
-        // AddVectorObs(Mathf.Clamp(Vector3.Dot(dirToTarget.normalized, orientationTransform.forward), 0, 1)); //the capsule is rotated so this is local forward
-        // AddVectorObs(Vector3.Dot(dirToTarget.normalized, body.up)); //the capsule is rotated so this is local forward
-        // AddVectorObs(Vector3.Dot(dirToTarget.normalized, orientationTransform.forward)); //the capsule is rotated so this is local forward
-        // AddVectorObs(Vector3.Dot(jdController.bodyPartsDict[body].rb.velocity.normalized, dirToTarget.normalized)); //the capsule is rotated so this is local forward
-
-
-        // AddVectorObs(body.rotation); //the capsule is rotated so this is local forward
-        // // AddVectorObs(body.rotation); //the capsule is rotated so this is local forward
-        // if(dirToTarget != Vector3.zero)
-        // {
-        //     AddVectorObs(Quaternion.LookRotation(dirToTarget));
-        //     // print(Quaternion.LookRotation(dirToTarget));
-        // }
-        // else
-        // {
-        //     AddVectorObs(Quaternion.identity);
-
-        // }
-
-
-        // foreach (var bodyPart in jdController.bodyPartsDict.Values)
-        // {
-        //     CollectObservationBodyPart(bodyPart);
-        // }
         foreach (var bodyPart in jdController.bodyPartsDict.Values)
         {
             CollectObservationBodyPart(bodyPart);
@@ -530,73 +253,20 @@ public class DogAgent : Agent {
     }
 
 
-
-
-
-	// /// <summary>
-    // /// Agent touched the target
-    // /// </summary>
-	// public void TouchedTarget(float impactForce)
-	// {
-	// 	// AddReward(.01f * impactForce); //higher impact should be rewarded
-	// 	AddReward(1); //higher impact should be rewarded
-    //     reachedTargetReward+=1;
-    //     totalReward+=1;
-    //     if(respawnTargetWhenTouched)
-    //     {
-	// 	    GetRandomTargetPos();
-    //     }
-	// 	Done();
-	// }
 	/// <summary>
     /// Agent touched the target
     /// </summary>
 	public void TouchedTarget()
 	{
-		// AddReward(.01f * impactForce); //higher impact should be rewarded
 		AddReward(1); //higher impact should be rewarded
         reachedTargetReward+=1;
         totalReward+=1;
         if(respawnTargetWhenTouched)
         {
-		    // GetRandomTargetPos();
 		     SpawnBone();
         }
 		Done();
 	}
-
-    Vector3 GetAvgCenterOfMassForAllRBs()
-    {
-        Vector3 CoM = Vector3.zero;
-        float c = 0f;
-        
-        foreach (Rigidbody rb in allRBs)
-        {
-            CoM += rb.worldCenterOfMass * rb.mass;
-            c += rb.mass;
-        }
- 
-        CoM /= c;
-        return body.InverseTransformPoint(CoM);
-        // Debug.DrawRay(body.position, body.InverseTransformPoint(CoM), Color.red, .05f);
-        // Debug.DrawRay(CoM, Vector3.up, Color.green, .05f);
-        // // print(CoM);
-        // print(body.InverseTransformPoint(CoM));
-    }
-
-
-    // /// <summary>
-    // /// Moves target to a random position within specified radius.
-    // /// </summary>
-    // /// <returns>
-    // /// Move target to random position.
-    // /// </returns>
-    // public void GetRandomTargetPos()
-    // {
-    //     Vector3 newTargetPos = Random.insideUnitSphere * targetSpawnRadius;
-	// 	newTargetPos.y = 5;
-	// 	target.position = newTargetPos;
-    // }
 
 
     //We only need to change the joint settings based on decision freq.
@@ -613,33 +283,7 @@ public class DogAgent : Agent {
             isNewDecisionStep = false;
         }
     }
-    // /// <summary>
-    // /// Apply torque according to defined goal `x, y, z` angle and force `strength`.
-    // /// </summary>
-    // // public void SetTargetJointRotation(ConfigurableJoint joint, Vector3 rot)
-    // public void SetTargetJointRotation(BodyPart bp, Vector3 rot)
-    // {
-    //     // var xRot = Mathf.Lerp(joint.lowAngularXLimit.limit, joint.highAngularXLimit.limit, curve.Evaluate(curveTimer));
-    //     // var yRot = Mathf.Lerp(-joint.angularYLimit.limit, joint.angularYLimit.limit, curve.Evaluate(curveTimer));
-    //     // var zRot = Mathf.Lerp(-joint.angularZLimit.limit, joint.angularZLimit.limit, curve.Evaluate(curveTimer));
-    //     // joint.targetRotation = Quaternion.Euler(xRot, yRot, zRot);
-    //     bp.joint.targetRotation = Quaternion.Euler(rot.x, rot.y, rot.z);
-    //     // bp.joint.targetRotation = bp.startingLocalRot * Quaternion.Euler(rot.x, rot.y, rot.z);
-    //     print(Quaternion.FromToRotation(bp.joint.axis, bp.joint.connectedBody.transform.rotation.eulerAngles).eulerAngles);
-    // }
 
-
-    // void RotateBody()
-    // {
-    //     //body rotation
-    //     var targetRot = Quaternion.LookRotation(dirToTarget); //dir to rotate
-    //     var newRot = Quaternion.Lerp(jdController.bodyPartsDict[body].rb.rotation, targetRot, turnSpeed * Time.deltaTime); //lerp it so it's not dramatic
-    //     Vector3 rotDir = dirToTarget; 
-    //     rotDir.y = 0;
-    //     // jdController.bodyPartsDict[body].rb.MoveRotation(newRot);
-    //     jdController.bodyPartsDict[body].rb.AddForceAtPosition(rotDir.normalized * turnSpeed * Time.deltaTime, body.forward * turnOffset, turningForceMode); //tug on the front
-    //     jdController.bodyPartsDict[body].rb.AddForceAtPosition(-rotDir.normalized * turnSpeed * Time.deltaTime, -body.forward * turnOffset, turningForceMode); //tug on the back
-    // }
     void RotateBody(float act)
     {
         //body rotation
@@ -672,6 +316,47 @@ public class DogAgent : Agent {
         idling = false;
     }
 
+    public IEnumerator GoGetBone()
+    {       
+        print("started GoGetBone()");
+        idling = false;
+        target = boneController.bone;
+        runningToBone = true;
+
+        if(boneController.currentlyTouching)
+        {
+            yield return null;
+        }
+        else if(dirToTarget.sqrMagnitude > 1 )
+        {
+            PickUpBone();
+            runningToBone = false;
+
+        }
+
+        // while(dirToTarget.sqrMagnitude > 1 && boneController.currentlyTouching)
+        // {
+        //     yield return null;
+        // }
+        // PickUpBone();
+        // runningToBone = false;
+
+
+
+        target = boneController.returnPoint;
+        returningBone = true;
+        yield return null;
+
+        while(dirToTarget.sqrMagnitude > 1)
+        {
+            yield return null;
+        }
+        DropBone();
+        returningBone = false;
+
+    }
+
+
 	public override void AgentAction(float[] vectorAction, string textAction)
     {
 
@@ -679,39 +364,34 @@ public class DogAgent : Agent {
         dirToTargetNormalized = dirToTarget.normalized;
         bodyVelNormalized = jdController.bodyPartsDict[body].rb.velocity.normalized;
 
-        if(shouldGoGetBone && !runningToBone)
-        {
-            idling = false;
-            target = boneController.bone;
-            runningToBone = true;
-        }
+        // if(shouldGoGetBone && !runningToBone)
+        // {
+        //     idling = false;
+        //     target = boneController.bone;
+        //     runningToBone = true;
+        // }
 
-        if(shouldPickUpBone && !hasBone)
-        {
-            PickUpBone();
-        }
+        // // if(shouldPickUpBone && !hasBone)
+        // if(shouldPickUpBone && !hasBone)
+        // {
+        //     PickUpBone();
+        // }
 
-        if(shouldReturnTheBone && !returningBone)
-        {
-            target = boneController.returnPoint;
-            returningBone = true;
-        }
+        // if(shouldReturnTheBone && !returningBone)
+        // {
+        //     target = boneController.returnPoint;
+        //     returningBone = true;
+        // }
 
-        if(returningBone && dirToTarget.magnitude < 1)
-        {
-            DropBone();
-        }
+        // if(returningBone && dirToTarget.magnitude < 1)
+        // {
+        //     DropBone();
+        // }
         // if(shouldIdle && !idling)
         // {
         //     //idle logic. may need diff brain
         //     StartIdling();
         // }
-
-
-
-
-
-
 
         agentReward = GetCumulativeReward();
         // print(jdController.bodyPartsDict[body].rb.velocity.z);
@@ -742,74 +422,12 @@ public class DogAgent : Agent {
             closestDistanceToTargetSoFarSqrMag = dirSqr;
 
         }
-        // else if(!fastest)
-        // {
-        //     fastest = false;
-        // }
-
-
-
-
-
-
-
-        // print(bodyParts[body].rb.velocity.magnitude * 2.237);
-
-        // if(testJointRotation)
-        // {
-        //     // SetTargetRotationLocal (bodyParts[leg0_upper].joint, Quaternion.Euler (targetRotUpper.x,targetRotUpper.y,targetRotUpper.z), bodyParts[leg0_upper].startingLocalRot);
-        //     // SetTargetRotationLocal (bodyParts[leg1_upper].joint, Quaternion.Euler (targetRotUpper.x,targetRotUpper.y,targetRotUpper.z), bodyParts[leg1_upper].startingLocalRot);
-        //     // SetTargetRotationLocal (bodyParts[leg2_upper].joint, Quaternion.Euler (targetRotUpper.x,targetRotUpper.y,targetRotUpper.z), bodyParts[leg2_upper].startingLocalRot);
-        //     // SetTargetRotationLocal (bodyParts[leg3_upper].joint, Quaternion.Euler (targetRotUpper.x,targetRotUpper.y,targetRotUpper.z), bodyParts[leg3_upper].startingLocalRot);
-
-        //     SetTargetJointRotation(bodyParts[leg0_upper], targetRotUpper);
-        //     SetTargetJointRotation(bodyParts[leg1_upper], targetRotUpper);
-        //     SetTargetJointRotation(bodyParts[leg2_upper], targetRotUpper);
-        //     SetTargetJointRotation(bodyParts[leg3_upper], targetRotUpper);
-        //     // SetTargetJointRotation(bodyParts[leg0_lower], targetRotLower);
-        //     // SetTargetJointRotation(bodyParts[leg1_lower], targetRotLower);
-        //     // SetTargetJointRotation(bodyParts[leg2_lower], targetRotLower);
-        //     // SetTargetJointRotation(bodyParts[leg3_lower], targetRotLower);
-        //     return;
-        // }
-        
-        // GetAvgCenterOfMassForAllRBs();
-        //update pos to target
-
-
-        
-
-        //if enabled the feet will light up green when the foot is grounded.
-        //this is just a visualization and isn't necessary for function
-        if(useFootGroundedVisualization)
-        {
-            foot0.material = jdController.bodyPartsDict[leg0_lower].groundContact.touchingGround? groundedMaterial: unGroundedMaterial;
-            foot1.material = jdController.bodyPartsDict[leg1_lower].groundContact.touchingGround? groundedMaterial: unGroundedMaterial;
-            foot2.material = jdController.bodyPartsDict[leg2_lower].groundContact.touchingGround? groundedMaterial: unGroundedMaterial;
-            foot3.material = jdController.bodyPartsDict[leg3_lower].groundContact.touchingGround? groundedMaterial: unGroundedMaterial;
-        }
-
-
-
-
-
-
 
         if(isNewDecisionStep)
         {
             var bpDict = jdController.bodyPartsDict;
             int i = -1;
 
-            // // Apply action to all relevant body parts. 
-            // bodyParts[leg0_upper].SetNormalizedTargetRotation(vectorAction[0], vectorAction[1], 0, vectorAction[2]);
-            // bodyParts[leg1_upper].SetNormalizedTargetRotation(vectorAction[3], vectorAction[4], 0, vectorAction[5]);
-            // bodyParts[leg2_upper].SetNormalizedTargetRotation(vectorAction[6], vectorAction[7], 0, vectorAction[8]);
-            // bodyParts[leg3_upper].SetNormalizedTargetRotation(vectorAction[9], vectorAction[10], 0, vectorAction[11]);
-            // bodyParts[leg0_lower].SetNormalizedTargetRotation(vectorAction[12], 0, 0, vectorAction[13]);
-            // bodyParts[leg1_lower].SetNormalizedTargetRotation(vectorAction[14], 0, 0, vectorAction[15]);
-            // bodyParts[leg2_lower].SetNormalizedTargetRotation(vectorAction[16], 0, 0, vectorAction[17]);
-            // bodyParts[leg3_lower].SetNormalizedTargetRotation(vectorAction[18], 0, 0, vectorAction[19]);
-            // Apply action to all relevant body parts. 
             bpDict[leg0_upper].SetJointTargetRotation(vectorAction[0], vectorAction[1], 0);
             bpDict[leg1_upper].SetJointTargetRotation(vectorAction[2], vectorAction[3], 0);
             bpDict[leg2_upper].SetJointTargetRotation(vectorAction[4], vectorAction[5], 0);
@@ -832,137 +450,23 @@ public class DogAgent : Agent {
             RotateBody(vectorAction[16]);
 
         }
-
-
-
-        // var energyPenalty = -.0001f * Mathf.Abs(vectorAction[8] + vectorAction[9] + vectorAction[10] + vectorAction[11]);
-        // var energyPenalty = -.0001f * Mathf.Abs(vectorAction[8] + vectorAction[9] + vectorAction[10] + vectorAction[11]);
-
-
-
-
         var bodyRotationPenalty = -.001f * vectorAction[12]; //rotation strength
         AddReward(bodyRotationPenalty);
-        // AddReward(-.0000001f * energyPenalty);
-        // AddReward(jointStrengthPenalty + bodyRotationPenalty);
-        // var jointStrengthPenalty = -.0000001f * energyPenalty;//joint strength
-        // AddReward(jointStrengthPenalty);
-
-        // energyReward += jointStrengthPenalty + bodyRotationPenalty;
-        // totalReward += energyReward;
-
-
-
-
-
-
-        // if(isNewDecisionStep)
-        // {
-        //     // // Apply action to all relevant body parts. 
-        //     // bodyParts[leg0_upper].SetNormalizedTargetRotation(vectorAction[0], vectorAction[1], 0, vectorAction[2]);
-        //     // bodyParts[leg1_upper].SetNormalizedTargetRotation(vectorAction[3], vectorAction[4], 0, vectorAction[5]);
-        //     // bodyParts[leg2_upper].SetNormalizedTargetRotation(vectorAction[6], vectorAction[7], 0, vectorAction[8]);
-        //     // bodyParts[leg3_upper].SetNormalizedTargetRotation(vectorAction[9], vectorAction[10], 0, vectorAction[11]);
-        //     // bodyParts[leg0_lower].SetNormalizedTargetRotation(vectorAction[12], 0, 0, vectorAction[13]);
-        //     // bodyParts[leg1_lower].SetNormalizedTargetRotation(vectorAction[14], 0, 0, vectorAction[15]);
-        //     // bodyParts[leg2_lower].SetNormalizedTargetRotation(vectorAction[16], 0, 0, vectorAction[17]);
-        //     // bodyParts[leg3_lower].SetNormalizedTargetRotation(vectorAction[18], 0, 0, vectorAction[19]);
-        //     // Apply action to all relevant body parts. 
-        //     bodyParts[leg0_upper].SetNormalizedTargetRotation(vectorAction[0], vectorAction[1], 0);
-        //     bodyParts[leg1_upper].SetNormalizedTargetRotation(vectorAction[2], vectorAction[3], 0);
-        //     bodyParts[leg2_upper].SetNormalizedTargetRotation(vectorAction[4], vectorAction[5], 0);
-        //     bodyParts[leg3_upper].SetNormalizedTargetRotation(vectorAction[6], vectorAction[7], 0);
-        //     bodyParts[leg0_lower].SetNormalizedTargetRotation(vectorAction[8], 0, 0);
-        //     bodyParts[leg1_lower].SetNormalizedTargetRotation(vectorAction[9], 0, 0);
-        //     bodyParts[leg2_lower].SetNormalizedTargetRotation(vectorAction[10], 0, 0);
-        //     bodyParts[leg3_lower].SetNormalizedTargetRotation(vectorAction[11], 0, 0);
-        // }
-
-        //     //update joint drive settings
-        //     bodyParts[leg0_upper].UpdateJointDrive(vectorAction[12]);
-        //     bodyParts[leg1_upper].UpdateJointDrive(vectorAction[13]);
-        //     bodyParts[leg2_upper].UpdateJointDrive(vectorAction[14]);
-        //     bodyParts[leg3_upper].UpdateJointDrive(vectorAction[15]);
-        //     bodyParts[leg0_lower].UpdateJointDrive(vectorAction[16]);
-        //     bodyParts[leg1_lower].UpdateJointDrive(vectorAction[17]);
-        //     bodyParts[leg2_lower].UpdateJointDrive(vectorAction[18]);
-        //     bodyParts[leg3_lower].UpdateJointDrive(vectorAction[19]);
-
-
-
 
         // Set reward for this step according to mixture of the following elements.
         if(rewardMovingTowardsTarget){RewardFunctionMovingTowards();}
         // if(rewardFacingTarget){RewardFunctionFacingTarget();}
         if(rewardUseTimePenalty){RewardFunctionTimePenalty();}
         IncrementDecisionTimer();
-        // if(printRewardsToConsole)
-        // {
-        //     PrintRewards();
-        // }
     }
 	
     //Reward moving towards target & Penalize moving away from target.
     void RewardFunctionMovingTowards()
     {
-        //don't normalize vel. the faster it goes the more reward it should get
-        //0.03f chosen via experimentation
 		movingTowardsDot = Vector3.Dot(jdController.bodyPartsDict[body].rb.velocity, dirToTarget.normalized); 
-		// movingTowardsDot = Vector3.Dot(jdController.bodyPartsDict[body].rb.velocity.normalized, dirToTarget.normalized); 
-		// movingTowardsDot = Vector3.Dot(bodyParts[body].rb.velocity, dirToTarget.normalized); 
-        // movingTowardsDot = Mathf.Clamp(movingTowardsDot, -5, 50f);
-        // movingTowardsDot = Mathf.Clamp(movingTowardsDot, -5, 50f);
-
-        // AddReward(0.0003f * movingTowardsDot);
         moveTowardsReward += 0.01f * movingTowardsDot;
-        // moveTowardsReward += 0.003f * movingTowardsDot;
         totalReward += moveTowardsReward;
         AddReward(0.01f * movingTowardsDot);
-        // AddReward(0.003f * movingTowardsDot);
-        // AddReward(0.03f * movingTowardsDot);
-
-        // if(rewardFacingTarget)
-        // {
-        //     // movingTowardsDot = Vector3.Dot(bodyParts[body].rb.velocity, dirToTarget.normalized); 
-        //     facingDot = Vector3.Dot(dirToTarget.normalized, body.forward); //up is local forward because capsule is rotated
-        //     if(movingTowardsDot > .8f)
-        //     {
-        //         facingDot = Mathf.Clamp(facingDot, 0, 1f);
-        //         facingReward += 0.001f * facingDot;
-        //         totalReward += facingReward;
-        //         AddReward(0.001f * facingDot);
-        //     }
-
-        // }
-
-    }
-
-    //Reward facing target & Penalize facing away from target
-    void RewardFunctionFacingTarget()
-    {
-        //0.01f chosen via experimentation.
-		// facingDot = Vector3.Dot(dirToTarget.normalized, body.up);
-        // facingDotQuat = Quaternion.Dot(bodyParts[body].rb.rotation, Quaternion.LookRotation(dirToTarget));
-        // facingDot = Vector3.Dot(dirToTarget.normalized, body.up); //up is local forward because capsule is rotated
-        facingDot = Vector3.Dot(dirToTarget.normalized, body.forward); //up is local forward because capsule is rotated
-        facingDot = Mathf.Clamp(facingDot, 0, 1f);
-        // facingDot = Vector3.Dot(bodyParts[body].rb.velocity.normalized, body.up); //up is local forward because capsule is rotated
-        // Debug.DrawRay(orientationTransform.position, dirToTarget.normalized, Color.red, .01f);
-        // Debug.DrawRay(orientationTransform.position, orientationTransform.forward, Color.green, .01f);
-        // if(facingDot > .9f)
-        // {
-        //     AddReward(0.01f);
-        // }
-        // else
-        // {
-        //     AddReward(-0.01f);
-
-        // }
-        // AddReward(0.01f * facingDotQuat);
-        // AddReward(0.03f * facingDot);
-        facingReward += 0.001f * facingDot;
-        totalReward += facingReward;
-        AddReward(0.001f * facingDot);
     }
 
     //Time penalty - HURRY UP
@@ -975,30 +479,12 @@ public class DogAgent : Agent {
         // AddReward(- 0.001f); 
     }
     
-    void PrintRewards()
-    {
-        print("Rewards: " + 
-        " Energy: " + energyReward +
-        " MoveTowards: " + moveTowardsReward +
-        " Facing: " + facingReward +
-        " Hurry: " + "-.001f"
-        );
-    }
 
 	/// <summary>
     /// Loop over body parts and reset them to initial conditions.
     /// </summary>
     public override void AgentReset()
     {
-        // if(dirToTarget != Vector3.zero)
-        // {
-        //     transform.rotation = Quaternion.LookRotation(dirToTarget);
-        // }
-        // if(!jdController){ jdController = GetComponent<JointDriveController>();}
-        // if(Application.isEditor)
-        // {
-        //     DropBone();
-        // }
         foreach (var bodyPart in jdController.bodyPartsDict.Values)
         {
             bodyPart.Reset();
@@ -1014,70 +500,4 @@ public class DogAgent : Agent {
         reachedTargetReward = 0;
         energyPenalty = 0;
     }
-
-
-
 }
-
-
-
-
-
-
-// 	/// <summary>
-// 	/// Sets a joint's targetRotation to match a given local rotation.
-// 	/// The joint transform's local rotation must be cached on Start and passed into this method.
-// 	/// </summary>
-
-//     ///usage:  myJoint.SetTargetRotationLocal (Quaternion.Euler (0, 90, 0), startRotation);
-
-// 	public void SetTargetRotationLocal (ConfigurableJoint joint, Quaternion targetLocalRotation, Quaternion startLocalRotation)
-// 	{
-// 		if (joint.configuredInWorldSpace) {
-// 			Debug.LogError ("SetTargetRotationLocal should not be used with joints that are configured in world space. For world space joints, use SetTargetRotation.", joint);
-// 		}
-// 		SetTargetRotationInternal (joint, targetLocalRotation, startLocalRotation, Space.Self);
-// 	}
-	
-// 	/// <summary>
-// 	/// Sets a joint's targetRotation to match a given world rotation.
-// 	/// The joint transform's world rotation must be cached on Start and passed into this method.
-// 	/// </summary>
-// 	public void SetTargetRotation (ConfigurableJoint joint, Quaternion targetWorldRotation, Quaternion startWorldRotation)
-// 	{
-// 		if (!joint.configuredInWorldSpace) {
-// 			Debug.LogError ("SetTargetRotation must be used with joints that are configured in world space. For local space joints, use SetTargetRotationLocal.", joint);
-// 		}
-// 		SetTargetRotationInternal (joint, targetWorldRotation, startWorldRotation, Space.World);
-// 	}
-	
-// 	void SetTargetRotationInternal (ConfigurableJoint joint, Quaternion targetRotation, Quaternion startRotation, Space space)
-// 	{
-// 		// Calculate the rotation expressed by the joint's axis and secondary axis
-// 		var right = joint.axis;
-// 		var forward = Vector3.Cross (joint.axis, joint.secondaryAxis).normalized;
-// 		var up = Vector3.Cross (forward, right).normalized;
-// 		Quaternion worldToJointSpace = Quaternion.LookRotation (forward, up);
-		
-// 		// Transform into world space
-// 		Quaternion resultRotation = Quaternion.Inverse (worldToJointSpace);
-		
-// 		// Counter-rotate and apply the new local rotation.
-// 		// Joint space is the inverse of world space, so we need to invert our value
-// 		if (space == Space.World) {
-// 			resultRotation *= startRotation * Quaternion.Inverse (targetRotation);
-// 		} else {
-// 			resultRotation *= Quaternion.Inverse (targetRotation) * startRotation;
-// 		}
-		
-// 		// Transform back into joint space
-// 		resultRotation *= worldToJointSpace;
-		
-// 		// Set target rotation to our newly calculated rotation
-// 		joint.targetRotation = resultRotation;
-// 	}
-// }
-
-
-
-
