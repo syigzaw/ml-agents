@@ -133,10 +133,13 @@ public class DogAgent : Agent {
         // target = leg2_lower;
         // shouldIdle = true;
         boneController = FindObjectOfType<ThrowBone>();
-        target = boneController.returnPoint;
+        if(gameMode)
+        {
+            target = boneController.returnPoint;
+        }
                 // Get the ground's bounds
         spawnAreaBounds = spawnArea.GetComponent<Collider>().bounds;
-                closestDistanceToTargetSoFarSqrMag = 10000;
+        closestDistanceToTargetSoFarSqrMag = 10000;
         jdController = GetComponent<JointDriveController>();
 
         // jdController.bodyPartsDictList.Clear();
@@ -166,24 +169,10 @@ public class DogAgent : Agent {
     /// </summary>
     public void SpawnBone()
     {
-        // bool foundNewSpawnLocation = false;
         Vector3 randomSpawnPos = Vector3.zero;
-        // while (foundNewSpawnLocation == false)
-        // {
-            float randomPosX = Random.Range(-spawnAreaBounds.extents.x, spawnAreaBounds.extents.x);
-            float randomPosZ = Random.Range(-spawnAreaBounds.extents.z, spawnAreaBounds.extents.z);
-
-            // float randomPosZ = Random.Range(-spawnArea.extents.z * spawnArea.spawnAreaMarginMultiplier,
-            //                                 spawnArea.extents.z * spawnArea.spawnAreaMarginMultiplier);
-            // randomSpawnPos = spawnArea.transform.position + new Vector3(randomPosX, 1f, randomPosZ);
-            // boneController.bone.position = spawnArea.transform.position + new Vector3(randomPosX, 1f, randomPosZ);
-            target.position = spawnArea.transform.position + new Vector3(randomPosX, 1f, randomPosZ);
-            // if (Physics.CheckBox(randomSpawnPos, new Vector3(2.5f, 0.01f, 2.5f)) == false)
-            // {
-            //     foundNewSpawnLocation = true;
-            // }
-        // }
-        // return randomSpawnPos;
+        float randomPosX = Random.Range(-spawnAreaBounds.extents.x, spawnAreaBounds.extents.x);
+        float randomPosZ = Random.Range(-spawnAreaBounds.extents.z, spawnAreaBounds.extents.z);
+        target.position = spawnArea.transform.position + new Vector3(randomPosX, 1f, randomPosZ);
     }
 
 
@@ -323,23 +312,23 @@ public class DogAgent : Agent {
         target = boneController.bone;
         runningToBone = true;
 
-        if(boneController.currentlyTouching)
-        {
-            yield return null;
-        }
-        else if(dirToTarget.sqrMagnitude > 1 )
-        {
-            PickUpBone();
-            runningToBone = false;
-
-        }
-
-        // while(dirToTarget.sqrMagnitude > 1 && boneController.currentlyTouching)
+        // if(boneController.currentlyTouching)
         // {
         //     yield return null;
         // }
-        // PickUpBone();
-        // runningToBone = false;
+        // else if(dirToTarget.sqrMagnitude > .7f )
+        // {
+        //     PickUpBone();
+        //     runningToBone = false;
+
+        // }
+
+        while(dirToTarget.sqrMagnitude > 1f)
+        {
+            yield return null;
+        }
+        PickUpBone();
+        runningToBone = false;
 
 
 
@@ -347,18 +336,28 @@ public class DogAgent : Agent {
         returningBone = true;
         yield return null;
 
-        while(dirToTarget.sqrMagnitude > 1)
+        while(dirToTarget.sqrMagnitude > 1f)
         {
             yield return null;
         }
         DropBone();
         returningBone = false;
+        print("returned Bone");
+
 
     }
 
 
 	public override void AgentAction(float[] vectorAction, string textAction)
     {
+
+        foreach (var bp in jdController.bodyPartsDict.Values)
+        {
+            if(!IsDone() && bp.targetContact.touchingTarget)
+            {
+                TouchedTarget();
+            }
+        }
 
         dirToTarget = target.position - jdController.bodyPartsDict[body].rb.position;
         dirToTargetNormalized = dirToTarget.normalized;

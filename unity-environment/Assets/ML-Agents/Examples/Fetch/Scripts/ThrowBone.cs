@@ -44,6 +44,7 @@ public class ThrowBone : MonoBehaviour {
 		canThrowBone = true;
 		boneRB = bone.GetComponent<Rigidbody>();
 		boneCol = bone.GetComponent<Collider>();
+		// boneRB.maxAngularVelocity = 500;
 	}
 	
 	void StartSwipe()
@@ -105,7 +106,7 @@ public class ThrowBone : MonoBehaviour {
 	void Throw()
 	{
 		// throwSpeed
-		boneRB.velocity *= .1f;
+		boneRB.velocity *= .5f;
 		// var dir = cam.ScreenToViewportPoint(throwDir.normalized + cam.transform.forward);
 		// var d = throwDir;
 		// throwDir.Normalize();

@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/ML-Agents/Examples/Fetch/Scenes/Fetch.unity
+    path: Assets/ML-Agents/Examples/Fetch/Scenes/Fetch Training.unity
     guid: d9a4e7d08037d49c895555d4fe344764
+  - enabled: 0
+    path: Assets/ML-Agents/Examples/Fetch/Scenes/Fetch Game.unity
+    guid: 0974804bcb3994f62805192f52b662a8
   - enabled: 1
     path: Assets/ML-Agents/Examples/Fetch/Scenes/Title Screen.unity
-    guid: 0974804bcb3994f62805192f52b662a8
+    guid: a8cf19aed42da4641b84d1a2ba9b07b1
   m_configObjects: {}
