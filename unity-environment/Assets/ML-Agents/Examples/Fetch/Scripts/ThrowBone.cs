@@ -37,6 +37,8 @@ public class ThrowBone : MonoBehaviour {
 	public float throwSpeed;
 	public Vector3 throwDir;
 	Camera cam;
+	public List<AudioClip> throwSounds = new List <AudioClip>();
+	public AudioSource audioSourceSFX;
 
 	// Use this for initialization
 	void Start () {
@@ -44,6 +46,9 @@ public class ThrowBone : MonoBehaviour {
 		canThrowBone = true;
 		boneRB = bone.GetComponent<Rigidbody>();
 		boneCol = bone.GetComponent<Collider>();
+
+		audioSourceSFX = gameObject.AddComponent<AudioSource>();
+		// audioSourceSFX.volume = .25f;
 		// boneRB.maxAngularVelocity = 500;
 	}
 	
@@ -79,33 +84,36 @@ public class ThrowBone : MonoBehaviour {
 		}
 	}
 
-	void EndSwipe()
-	{
-		//Throw using dir
+	// void EndSwipe()
+	// {
+	// 	//Throw using dir
 
-		directionChosen = true;
-		currentlyTouching = false;
-		if(!dog.hasBone)
-		{
-			Throw();
-		}
-	}
+	// 	directionChosen = true;
+	// 	currentlyTouching = false;
+	// 	// if(!dog.runningToBone)
+	// 	// {
+	// 		Throw();
+	// 	// }
+	// }
 
-	void EndMouseDrag()
-	{
-		//Throw using dir
+	// void EndMouseDrag()
+	// {
+	// 	//Throw using dir
 
-		directionChosen = true;
-		currentlyTouching = false;
-		if(!dog.hasBone)
-		{
-			Throw();
-		}
-	}
+	// 	directionChosen = true;
+	// 	currentlyTouching = false;
+	// 	// if(!dog.runningToBone && )
+	// 	// {
+	// 		Throw();
+	// 	// }
+	// }
 
 	void Throw()
 	{
+		canThrowBone = false;
 		// throwSpeed
+		audioSourceSFX.PlayOneShot(throwSounds[Random.Range( 0, throwSounds.Count)], .25f);
+		
 		boneRB.velocity *= .5f;
 		// var dir = cam.ScreenToViewportPoint(throwDir.normalized + cam.transform.forward);
 		// var d = throwDir;
@@ -218,7 +226,8 @@ public class ThrowBone : MonoBehaviour {
 		// }
 		
 		// if(canThrowBone && !dog.hasBone)
-		if(canThrowBone && !hasThrownBone)
+		// if(canThrowBone && !hasThrownBone)
+		if(canThrowBone)
 		{
 				// Track a single touch as a direction control.
 			if (Input.touchCount > 0 && !currentlyTouching)
@@ -239,7 +248,10 @@ public class ThrowBone : MonoBehaviour {
 				}
 				if(currentTouch.phase == TouchPhase.Ended)
 				{
-					EndSwipe();
+					directionChosen = true;
+					currentlyTouching = false;
+					Throw();
+					// EndSwipe();
 				}
 			}
 
@@ -318,7 +330,10 @@ public class ThrowBone : MonoBehaviour {
 				}
 				if(Input.GetMouseButtonUp(0))
 				{
-					EndMouseDrag();
+					directionChosen = true;
+					currentlyTouching = false;
+					Throw();
+					// EndMouseDrag();
 				}
 			}
 		}

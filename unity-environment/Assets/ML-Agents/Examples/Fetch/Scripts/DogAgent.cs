@@ -125,11 +125,25 @@ public class DogAgent : Agent {
 
     JointDriveController jdController;
 
+	public List<AudioClip> barkSounds = new List <AudioClip>();
+	public AudioSource audioSourceSFX;
+	// public AudioSource audioPantingSFX;
+    // public AudioClip dogPantingSoundClip;
+
 
     void Awake()
     // void InitializeAgent()
     {
         AllStatesFalse();
+        audioSourceSFX = body.gameObject.AddComponent<AudioSource>();
+        audioSourceSFX.spatialBlend = .75f;
+        audioSourceSFX.minDistance = .7f;
+        audioSourceSFX.maxDistance = 5;
+        // audioPantingSFX = body.gameObject.AddComponent<AudioSource>();
+        // audioPantingSFX.clip = dogPantingSoundClip;
+        // audioPantingSFX.loop = true;
+        // audioPantingSFX.Play();
+
         // target = leg2_lower;
         // shouldIdle = true;
         boneController = FindObjectOfType<ThrowBone>();
@@ -160,6 +174,7 @@ public class DogAgent : Agent {
 
         allRBs.AddRange(gameObject.GetComponentsInChildren<Rigidbody>());
         currentDecisionStep = 1;
+        StartCoroutine(BarkBark());
     }
 
 
@@ -180,7 +195,7 @@ public class DogAgent : Agent {
     {
         // if(Application.isEditor && boneController)
         // {
-            print("PickUpBone()");
+            // print("PickUpBone()");
             hasBone = true;
             boneController.boneCol.enabled = false;
             boneController.boneRB.isKinematic = true;
@@ -198,7 +213,7 @@ public class DogAgent : Agent {
 
     public void DropBone()
     {
-            print("DropBone()");
+            // print("DropBone()");
         if(boneController)
         {
             boneController.boneRB.isKinematic = false;
@@ -305,13 +320,24 @@ public class DogAgent : Agent {
         idling = false;
     }
 
+    public IEnumerator BarkBark()
+    {       
+        while(true)
+        {
+            if(!returningBone)
+            {
+                audioSourceSFX.PlayOneShot(barkSounds[Random.Range( 0, barkSounds.Count)], 1);
+            }
+            yield return new WaitForSeconds(Random.Range(1, 10));
+        }
+    }
     public IEnumerator GoGetBone()
     {       
-        print("started GoGetBone()");
-        idling = false;
+        // print("started GoGetBone()");
+        // idling = false;
         target = boneController.bone;
         runningToBone = true;
-
+        // boneController.canThrowBone = false;
         // if(boneController.currentlyTouching)
         // {
         //     yield return null;
@@ -325,9 +351,14 @@ public class DogAgent : Agent {
 
         while(dirToTarget.sqrMagnitude > 1f)
         {
+            // audioSourceSFX.PlayOneShot(barkSounds[Random.Range( 0, barkSounds.Count)], 1);
+
+            // yield return new WaitForSeconds(Random.Range(1, 3));
+
             yield return null;
         }
         PickUpBone();
+        // audioPantingSFX.Stop();
         runningToBone = false;
 
 
@@ -342,7 +373,9 @@ public class DogAgent : Agent {
         }
         DropBone();
         returningBone = false;
-        print("returned Bone");
+        // print("returned Bone");
+        boneController.canThrowBone = true;
+
 
 
     }
