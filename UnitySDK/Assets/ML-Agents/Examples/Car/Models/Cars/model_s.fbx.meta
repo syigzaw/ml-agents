@@ -1,0 +1,380 @@
+fileFormatVersion: 2
+guid: e092fd068a75b0a41bcd86648633a29a
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Back Lights
+    100002: Body
+    100004: Bottom
+    100006: Bottom-back-protection
+    100008: Bottom-protection
+    100010: Break disc.001
+    100012: Charging hole
+    100014: Control panel
+    100016: Control panel silver
+    100018: Door interior-back
+    100020: Door-back
+    100022: Door-front
+    100024: Front-cone
+    100026: Front-grill
+    100028: Front-list-help-line
+    100030: Frunk
+    100032: Handle back
+    100034: Handle front
+    100036: Help-line-front
+    100038: Help-line-right.001
+    100040: Help-line-top
+    100042: Interior
+    100044: Light holders
+    100046: Lights back - cover
+    100048: Lights front
+    100050: Lights front-cover
+    100052: //RootNode
+    100054: Roof
+    100056: Seats front bottom modeling.000
+    100058: Seats front bottom modeling.001
+    100060: Seats rear bottom
+    100062: Silver trunk
+    100064: Silver-list
+    100066: Silver-list back door
+    100068: Silver-list front door
+    100070: Steering wheel
+    100072: Trunk
+    100074: Trunk Lights
+    100076: Trunk window
+    100078: wheel
+    100080: Wheel-cover
+    100082: Wheel-hub
+    100084: wheel2
+    100086: wheel3
+    100088: wheel4
+    100090: Windows
+    100092: Windows side
+    400000: Back Lights
+    400002: Body
+    400004: Bottom
+    400006: Bottom-back-protection
+    400008: Bottom-protection
+    400010: Break disc.001
+    400012: Charging hole
+    400014: Control panel
+    400016: Control panel silver
+    400018: Door interior-back
+    400020: Door-back
+    400022: Door-front
+    400024: Front-cone
+    400026: Front-grill
+    400028: Front-list-help-line
+    400030: Frunk
+    400032: Handle back
+    400034: Handle front
+    400036: Help-line-front
+    400038: Help-line-right.001
+    400040: Help-line-top
+    400042: Interior
+    400044: Light holders
+    400046: Lights back - cover
+    400048: Lights front
+    400050: Lights front-cover
+    400052: //RootNode
+    400054: Roof
+    400056: Seats front bottom modeling.000
+    400058: Seats front bottom modeling.001
+    400060: Seats rear bottom
+    400062: Silver trunk
+    400064: Silver-list
+    400066: Silver-list back door
+    400068: Silver-list front door
+    400070: Steering wheel
+    400072: Trunk
+    400074: Trunk Lights
+    400076: Trunk window
+    400078: wheel
+    400080: Wheel-cover
+    400082: Wheel-hub
+    400084: wheel2
+    400086: wheel3
+    400088: wheel4
+    400090: Windows
+    400092: Windows side
+    2300000: Back Lights
+    2300002: Body
+    2300004: Bottom
+    2300006: Bottom-back-protection
+    2300008: Bottom-protection
+    2300010: Break disc.001
+    2300012: Charging hole
+    2300014: Control panel
+    2300016: Control panel silver
+    2300018: Door interior-back
+    2300020: Door-back
+    2300022: Door-front
+    2300024: Front-cone
+    2300026: Front-grill
+    2300028: Front-list-help-line
+    2300030: Frunk
+    2300032: Handle back
+    2300034: Handle front
+    2300036: Help-line-front
+    2300038: Help-line-right.001
+    2300040: Help-line-top
+    2300042: Interior
+    2300044: Light holders
+    2300046: Lights back - cover
+    2300048: Lights front
+    2300050: Lights front-cover
+    2300052: Roof
+    2300054: Seats front bottom modeling.000
+    2300056: Seats front bottom modeling.001
+    2300058: Seats rear bottom
+    2300060: Silver trunk
+    2300062: Silver-list
+    2300064: Silver-list back door
+    2300066: Silver-list front door
+    2300068: Steering wheel
+    2300070: Trunk
+    2300072: Trunk Lights
+    2300074: Trunk window
+    2300076: wheel
+    2300078: Wheel-cover
+    2300080: Wheel-hub
+    2300082: wheel2
+    2300084: wheel3
+    2300086: wheel4
+    2300088: Windows
+    2300090: Windows side
+    3300000: Back Lights
+    3300002: Body
+    3300004: Bottom
+    3300006: Bottom-back-protection
+    3300008: Bottom-protection
+    3300010: Break disc.001
+    3300012: Charging hole
+    3300014: Control panel
+    3300016: Control panel silver
+    3300018: Door interior-back
+    3300020: Door-back
+    3300022: Door-front
+    3300024: Front-cone
+    3300026: Front-grill
+    3300028: Front-list-help-line
+    3300030: Frunk
+    3300032: Handle back
+    3300034: Handle front
+    3300036: Help-line-front
+    3300038: Help-line-right.001
+    3300040: Help-line-top
+    3300042: Interior
+    3300044: Light holders
+    3300046: Lights back - cover
+    3300048: Lights front
+    3300050: Lights front-cover
+    3300052: Roof
+    3300054: Seats front bottom modeling.000
+    3300056: Seats front bottom modeling.001
+    3300058: Seats rear bottom
+    3300060: Silver trunk
+    3300062: Silver-list
+    3300064: Silver-list back door
+    3300066: Silver-list front door
+    3300068: Steering wheel
+    3300070: Trunk
+    3300072: Trunk Lights
+    3300074: Trunk window
+    3300076: wheel
+    3300078: Wheel-cover
+    3300080: Wheel-hub
+    3300082: wheel2
+    3300084: wheel3
+    3300086: wheel4
+    3300088: Windows
+    3300090: Windows side
+    4300000: Bottom
+    4300002: Wheel-cover
+    4300004: Seats front bottom modeling.000
+    4300006: Back Lights
+    4300008: Lights front
+    4300010: Break disc.001
+    4300012: Bottom-back-protection
+    4300014: Windows side
+    4300016: Seats front bottom modeling.001
+    4300018: Control panel silver
+    4300020: Front-grill
+    4300022: Silver-list back door
+    4300024: Silver-list front door
+    4300026: Charging hole
+    4300028: Lights back - cover
+    4300030: Door interior-back
+    4300032: Control panel
+    4300034: Seats rear bottom
+    4300036: Help-line-right.001
+    4300038: Trunk window
+    4300040: Handle back
+    4300042: Handle front
+    4300044: Light holders
+    4300046: Trunk Lights
+    4300048: Interior
+    4300050: Door-back
+    4300052: Door-front
+    4300054: Trunk
+    4300056: Frunk
+    4300058: wheel4
+    4300060: wheel3
+    4300062: Wheel-hub
+    4300064: wheel2
+    4300066: wheel
+    4300068: Lights front-cover
+    4300070: Help-line-top
+    4300072: Windows
+    4300074: Front-cone
+    4300076: Front-list-help-line
+    4300078: Silver-list
+    4300080: Silver trunk
+    4300082: Bottom-protection
+    4300084: Roof
+    4300086: Help-line-front
+    4300088: Body
+    4300090: Steering wheel
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Body
+    second: {fileID: 2100000, guid: 4f153d2332a23364a8dc2be87330c92a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Line
+    second: {fileID: 2100000, guid: 630157eb5db8e89489825d38a421ac38, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mirror
+    second: {fileID: 2100000, guid: ad0ccde20911e4b40ba123be4e3e30f9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: e482c3259747a7a48a2f6cb4396fc778, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Roof
+    second: {fileID: 2100000, guid: 20ac5b662f1c4184e8f51666b0810d92, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Seats
+    second: {fileID: 2100000, guid: ae0b5074ed9ac784bbe0f5464ab187f2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Silver
+    second: {fileID: 2100000, guid: 8e1f0fa1464e46f48bb5b2909f915a54, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Silver.001
+    second: {fileID: 2100000, guid: 286718ebed7f4904492286c5366e3213, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SteeringWheel
+    second: {fileID: 2100000, guid: 28d19cb00974de7429f66aa3a0189ab5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Tyre
+    second: {fileID: 2100000, guid: ee839b39f72ac96468ee76390a21ddee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Windows
+    second: {fileID: 2100000, guid: 1e0f2aff08ca0c949bf9be0a41ffdc31, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wood
+    second: {fileID: 2100000, guid: 874ea2de6b41c4d4793529517c3bf757, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
